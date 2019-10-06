@@ -3,9 +3,12 @@ import csv
 import sys
 
 numFiles = 1
+prob = .5
 if len(sys.argv) > 1:
     numFiles = int(sys.argv[1]) #number of files to make
-prob = .5
+    if len(sys.argv) > 2:
+        prob = float(sys.argv[2])
+
 for x in range(1,numFiles + 1, 1):
     n = 10*x
     d = [[0]*n for _ in range(0,n)]

@@ -1,7 +1,8 @@
 import random
 #chromosome with 10 verts ex: [1, 0, 1, 1, 0, 0, 0, 0, 1, 1]
 class DataSet:
-    def init(self, size = 10):
+
+    def __init__(self, size = 10):
         self.data = []
         self.size = size
         self.read_data()
@@ -53,7 +54,7 @@ class DataSet:
             fit = self.fitness(pool[idx])
             if fit > fitness:
                 index = idx
-                fitness = self.fitness(idx)
+                fitness = fit
         return (index, fitness)
 
     #reads in data to 2d list
