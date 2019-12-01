@@ -2,8 +2,9 @@ import random
 #chromosome with 10 verts ex: [1, 0, 1, 1, 0, 0, 0, 0, 1, 1]
 class DataSet:
 
-    def __init__(self, size = 10):
+    def __init__(self, file_name, size = 10):
         self.data = []
+        self.file_name = file_name
         self.size = size
         self.read_data()
 
@@ -60,7 +61,7 @@ class DataSet:
     #reads in data to 2d list
     #reads in a data file with this many vertexes
     def read_data(self):
-        with open("data//independent_set_{}".format(self.size), 'r') as file:
+        with open("data//independent_set_{}".format(self.file_name), 'r') as file:
             for line in file:
                 self.data.append([int(x) for x in line.rstrip().split(',')])
         file.close()
