@@ -13,7 +13,7 @@ class DataSet:
     def random_pool(self, pool_size = 10):
         pool = []
         for _ in range(0, pool_size):
-            pool.append(self.fix_up([1]*self.size))
+            pool.append(self.fix_up([1 if random.random() < .5 else 0 for _ in range(self.size)]))
         return pool
 
     #calculates the fitness of a chromosome if feasable
