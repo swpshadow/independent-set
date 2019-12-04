@@ -6,7 +6,7 @@ numFiles = 1
 prob = .5
 if len(sys.argv) > 1:
     if sys.argv[1] == 'contrived':
-        n = 100
+        n = 50
         if len(sys.argv) > 2:
             n = int(sys.argv[2])
         l = [[0]*n for _ in range(0,n)]
@@ -16,7 +16,7 @@ if len(sys.argv) > 1:
                     l[i][j] = 0
                 else:
                     l[i][j] = 1
-        with open("data//independent_set_contrived", 'w') as csvFile:
+        with open("data//independent_set_contrived50", 'w') as csvFile:
             printer = csv.writer(csvFile)
             printer.writerows(l)
         csvFile.close()
