@@ -41,7 +41,7 @@ def single_point_crossover(p1, p2, size):
     return (c1, c2)
 
 def uniform_cross_over(p1, p2, size):
-    u = [random.randint(0,1)] * size
+    u = [random.choice([0,1]) for _ in p1]
     c1 = [p1[x] if u[x] == 0 else p2[x] for x in range(0,size)]
     c2 = [p1[x] if u[x] == 1 else p2[x] for x in range(0,size)]
     return (c1, c2)
@@ -61,9 +61,13 @@ def mutation(pool, mutation_rate = .05):
             d[idx] = (d[idx] + 1) % 2 #flips the bit
     return pool
 
-set_size = 150
-pool_size = 75 #make even number
-file_name = 'contrived150'
+set_size = 150 #####################
+pool_size = int(.6 * set_size) #make even number
+if pool_size % 2 == 1:
+    pool_size += 1
+file_name = 'contrived150' ################################
+optimal = 51
+
 if len(sys.argv) > 1:
     file_name = sys.argv[1]
     set_size = int(sys.argv[1])
@@ -71,35 +75,49 @@ if len(sys.argv) > 1:
     if pool_size % 2 == 1:
         pool_size += 1
 print(set_size, pool_size)
-data_set = DataSet(file_name, size = set_size)
-pool = data_set.random_pool(pool_size)
-best = (pool[0], data_set.fitness(pool[0]))
 
-iterations = 0
-max_iterations = 20000
-since_change = 0
-max_not_changed = 1250
 
-start_time = time.time()
-#runs until max iterations or it hasn't changed in max_not_changed steps
-while iterations < max_iterations and since_change < max_not_changed:
-    elites = []
-    for _ in range(0,2): #always just 2 elites. They are pulled out of parent pool and put back into next gen.
-        b = data_set.best_in_pool(pool)
-        elites.append(pool.pop(b[0]))
-    parent_pool = roulette_selection(pool, data_set) #roulette_selection(pool, data_set)
-    child_pool = cross_over(parent_pool, set_size, uniform_cross_over) #can pass which cross to use. Single or uniform
-    child_pool = random_mutation(child_pool) #just the one mutation method because it is a bit string...
+avg_fit = 0
+best_fit = 0
+avg_gens = 0
+print(time.time())
+for _ in range(0,5):
+    data_set = DataSet(file_name, size = set_size)
+    pool = data_set.random_pool(pool_size)
+    best = (pool[0], data_set.fitness(pool[0]))
+    iterations = 0
+    max_iterations = 20000
+    since_change = 0
+    max_not_changed = 2500
 
-    for id in pool: #deals with infeasibles
-        data_set.fix_up(id)
-    pool = child_pool
-    pool.extend(elites) #readds the elites to the population
-    new_best = data_set.best_in_pool(pool)
-    if new_best[1] > best[1]: #if found something with better fitness, replace best found so far
-        best = (pool[new_best[0]], new_best[1])
-        since_change = 0
-    iterations += 1
-    since_change += 1
-print("num iterations: ", iterations, "total time: ", time.time() - start_time)
-print(best)
+    start_time = time.time()
+    #runs until max iterations or it hasn't changed in max_not_changed steps
+    while time.time() - start_time < 600 and since_change < max_not_changed and best[1] < optimal:
+        elites = []
+        for _ in range(0,2): #always just 2 elites. They are pulled out of parent pool and put back into next gen.
+            b = data_set.best_in_pool(pool)
+            elites.append(pool.pop(b[0]))
+
+        parent_pool = tournament_selection(pool, data_set) #roulette_selection(pool, data_set) / tournament_selection(pool, data_set)
+        child_pool = cross_over(parent_pool, set_size, single_point_crossover) #can pass which cross to use. Single or uniform
+        child_pool = mutation(child_pool) #random_mutation(child_pool, , mutation_rate = .05) / def mutation(child_pool, mutation_rate = .05)
+
+        for id in child_pool: #deals with infeasibles
+            data_set.fix_up(id)
+        pool = child_pool
+        pool.extend(elites) #readds the elites to the population
+        new_best = data_set.best_in_pool(pool)
+        if new_best[1] > best[1]: #if found something with better fitness, replace best found so far
+            best = (pool[new_best[0]], new_best[1])
+            since_change = 0
+        iterations += 1
+        since_change += 1
+
+        if best[1] > best_fit:
+            best_fit = best[1]
+    avg_gens += iterations
+    print("num gens: ", iterations, "total time: ", time.time() - start_time)
+    print("best fit: ", best[1])
+    avg_fit += best[1]
+print()
+print("best fit: ", best_fit, "avg gens: ", avg_gens / 5, "avg fit: ", avg_fit / 5)
