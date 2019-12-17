@@ -42,7 +42,7 @@ for x in range(1,numFiles + 1, 1):
                 else:
                     d[i][j] = 0
 
-    with open("data//independent_set_{}".format(n), 'w') as csvFile:
+    with open("data//independent_set_sparse{}".format(n), 'w') as csvFile:
         printer = csv.writer(csvFile)
         printer.writerows(d)
     csvFile.close()

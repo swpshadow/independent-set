@@ -61,12 +61,12 @@ def mutation(pool, mutation_rate = .05):
             d[idx] = (d[idx] + 1) % 2 #flips the bit
     return pool
 
-set_size = 150 #####################
+set_size = 50 #####################
 pool_size = int(.6 * set_size) #make even number
 if pool_size % 2 == 1:
     pool_size += 1
-file_name = 'contrived150' ################################
-optimal = 51
+file_name = '50' ################################
+optimal = 100
 
 if len(sys.argv) > 1:
     file_name = sys.argv[1]
@@ -88,11 +88,11 @@ for _ in range(0,5):
     iterations = 0
     max_iterations = 20000
     since_change = 0
-    max_not_changed = 2500
+    max_not_changed = 5000
 
     start_time = time.time()
     #runs until max iterations or it hasn't changed in max_not_changed steps
-    while time.time() - start_time < 600 and since_change < max_not_changed and best[1] < optimal:
+    while time.time() - start_time < 420 and since_change < max_not_changed and best[1] < optimal:
         elites = []
         for _ in range(0,2): #always just 2 elites. They are pulled out of parent pool and put back into next gen.
             b = data_set.best_in_pool(pool)
@@ -100,7 +100,7 @@ for _ in range(0,5):
 
         parent_pool = tournament_selection(pool, data_set) #roulette_selection(pool, data_set) / tournament_selection(pool, data_set)
         child_pool = cross_over(parent_pool, set_size, single_point_crossover) #can pass which cross to use. Single or uniform
-        child_pool = mutation(child_pool) #random_mutation(child_pool, , mutation_rate = .05) / def mutation(child_pool, mutation_rate = .05)
+        child_pool = mutation(child_pool, mutation_rate = 0.15) #random_mutation(child_pool, , mutation_rate = .05) / def mutation(child_pool, mutation_rate = .05)
 
         for id in child_pool: #deals with infeasibles
             data_set.fix_up(id)
