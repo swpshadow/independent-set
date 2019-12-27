@@ -61,7 +61,7 @@ class DataSet:
     #reads in data to 2d list
     #reads in a data file with this many vertexes
     def read_data(self):
-        with open("data//independent_set_{}".format(self.file_name), 'r') as file:
+        with open("../data//independent_set_{}".format(self.file_name), 'r') as file:
             for line in file:
                 self.data.append([int(x) for x in line.rstrip().split(',')])
         file.close()
